@@ -96,7 +96,7 @@ body {
 .header-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1787,4 +1787,94 @@ main {
 :focus-visible {
     outline: 2px solid var(--cyan-primary);
     outline-offset: 2px;
+}
+
+/* === 手機響應式修復 === */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.75rem 0.75rem !important;
+    }
+
+    .section-title {
+        font-size: 1.5rem !important;
+    }
+
+    .hero-title {
+        font-size: 2rem !important;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem !important;
+    }
+
+    .hash-display {
+        font-size: 0.75rem !important;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .pow-status {
+        font-size: 0.8rem !important;
+    }
+
+    .block-mini {
+        font-size: 0.65rem !important;
+        padding: 0.5rem !important;
+    }
+
+    /* 移除重複的按鈕組（手機上只顯示一組） */
+    .pow-buttons {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .pow-buttons .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    /* 錢包與簽名在手機上 */
+    .wallet-panel {
+        padding: 0.75rem !important;
+    }
+
+    .signature-display {
+        font-size: 0.7rem !important;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .crypto-card {
+        padding: 1rem !important;
+    }
+
+    .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .control-btns {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem 0.5rem !important;
+    }
+
+    .hero-title {
+        font-size: 1.6rem !important;
+    }
+
+    .section-title {
+        font-size: 1.25rem !important;
+    }
+
+    .top-bar {
+        height: 3px !important;
+    }
 }
