@@ -294,6 +294,18 @@ async function tamperBlock() {
     
     const blockIndex = parseInt(selectEl.value);
     const newData = valueEl.value;
+    const currentData = chainData.blocks[blockIndex].data;
+    
+    // 如果資料未變更，提示使用者
+    if (newData === currentData || newData.trim() === '') {
+        resultEl.className = 'tamper-result valid';
+        resultEl.innerHTML = `
+            <strong>✅ 資料未變更</strong><br>
+            區塊 ${blockIndex} 的內容與原資料相同，Hash 驗證通過。<br>
+            請修改內容後再測試篡改功能。
+        `;
+        return;
+    }
     
     // 篡改資料
     chainData.blocks[blockIndex].data = newData;
