@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>區塊鏈互動課程｜從零理解加密貨幣</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 頂部 Cyan 裝飾條 -->
+    <div class="top-cyan-bar"></div>
+
+    <!-- 頂部導航 -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">⛓️</span>
+                <span class="logo-text">區塊鏈互動課程</span>
+            </div>
+            <nav class="main-nav">
+                <a href="#intro" class="nav-link active">簡介</a>
+                <a href="#block-structure" class="nav-link">區塊結構</a>
+                <a href="#hash" class="nav-link">Hash 計算</a>
+                <a href="#chain" class="nav-link">區塊連結</a>
+                <a href="#pow" class="nav-link">工作量證明</a>
+                <a href="#consensus" class="nav-link">共識機制</a>
+                <a href="#wallet" class="nav-link">錢包與簽名</a>
+                <a href="#crypto" class="nav-link">加密貨幣</a>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="選單">☰</button>
+        </div>
+    </header>
+
+    <!-- 漢堡選單內容 -->
+    <div class="mobile-nav-overlay"></div>
+    <nav class="mobile-nav">
+        <a href="#intro">簡介</a>
+        <a href="#block-structure">區塊結構</a>
+        <a href="#hash">Hash 計算</a>
+        <a href="#chain">區塊連結</a>
+        <a href="#pow">工作量證明</a>
+        <a href="#consensus">共識機制</a>
+        <a href="#wallet">錢包與簽名</a>
+        <a href="#crypto">加密貨幣</a>
+    </nav>
+
+    <main>
+        <!-- ==================== 第一章：簡介 ==================== -->
+        <section id="intro" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第一章</div>
+                <h1 class="section-title">什麼是區塊鏈？</h1>
+                <p class="section-subtitle">用互動式學習，輕鬆理解區塊鏈的核心概念</p>
+
+                <div class="intro-cards">
+                    <div class="intro-card" data-index="0">
+                        <div class="card-icon">🔗</div>
+                        <h3>分散式帳本</h3>
+                        <p>資料儲存在網路中所有節點，無需中央機構</p>
+                    </div>
+                    <div class="intro-card" data-index="1">
+                        <div class="card-icon">🔐</div>
+                        <h3>密碼學保護</h3>
+                        <p>使用雜湊函數與數位簽名確保資料安全與不可竄改</p>
+                    </div>
+                    <div class="intro-card" data-index="2">
+                        <div class="card-icon">🤝</div>
+                        <h3>共識機制</h3>
+                        <p>透過共識演算法讓所有節點達成一致</p>
+                    </div>
+                    <div class="intro-card" data-index="3">
+                        <div class="card-icon">📜</div>
+                        <h3>智慧合約</h3>
+                        <p>自動執行的程式碼，實現去中心化應用</p>
+                    </div>
+                </div>
+
+                <div class="scroll-hint">
+                    <span>向下滑動開始學習</span>
+                    <div class="scroll-arrow">↓</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第二章：區塊結構 ==================== -->
+        <section id="block-structure" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第二章</div>
+                <h1 class="section-title">區塊的結構</h1>
+                <p class="section-subtitle">每個區塊就像一頁帳本，記錄著重要的交易資訊</p>
+
+                <div class="interactive-area">
+                    <div class="block-visual" id="block-visual-1">
+                        <div class="block-header">
+                            <span class="block-label">區塊 #<span id="block-num">1</span></span>
+                            <span class="block-timestamp" id="block-time">2026-04-03 10:00:00</span>
+                        </div>
+                        <div class="block-body">
+                            <div class="block-field">
+                                <label>Index（區塊編號）</label>
+                                <input type="number" id="input-index" value="1" min="1" class="code-input">
+                            </div>
+                            <div class="block-field">
+                                <label>Data（資料）</label>
+                                <textarea id="input-data" class="code-input" rows="2" placeholder="輸入交易資料...">A 轉給 B 10 枚比特幣</textarea>
+                            </div>
+                            <div class="block-field">
+                                <label>Previous Hash（前一區塊的 Hash）</label>
+                                <input type="text" id="input-prevhash" value="0000000000000000000000000000000000000000000000000000000000000000" class="code-input hash-input" readonly>
+                            </div>
+                            <div class="block-field">
+                                <label>Nonce（隨機數）</label>
+                                <input type="number" id="input-nonce" value="0" min="0" class="code-input">
+                            </div>
+                            <div class="block-field highlight">
+                                <label>Hash（此區塊的指紋）</label>
+                                <div class="hash-display" id="display-hash">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetBlock()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('block-structure')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>Index</strong>：區塊在鏈中的位置，從 0 開始</li>
+                            <li><strong>Data</strong>：區塊中儲存的資料（如交易記錄）</li>
+                            <li><strong>Previous Hash</strong>：連接前一區塊的「鎖鏈」</li>
+                            <li><strong>Nonce</strong>：挖礦時變化的數字，用於產生符合條件的 Hash</li>
+                            <li><strong>Hash</strong>：區塊的數位指紋，任何資料改變都會讓 Hash 完全改變</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第三章：Hash 計算 ==================== -->
+        <section id="hash" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第三章</div>
+                <h1 class="section-title">Hash 計算</h1>
+                <p class="section-subtitle">試著改變輸入，觀察 Hash 如何戲劇性變化！</p>
+
+                <div class="interactive-area">
+                    <div class="hash-demo">
+                        <div class="hash-input-area">
+                            <label>輸入任何文字：</label>
+                            <textarea id="hash-input" class="code-input large" rows="3" placeholder="輸入文字來計算 Hash...">Hello, Blockchain!</textarea>
+                        </div>
+
+                        <div class="hash-output-area">
+                            <label>SHA-256 Hash：</label>
+                            <div class="hash-result" id="hash-result">9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08</div>
+                        </div>
+
+                        <div class="hash-animation" id="hash-animation">
+                            <div class="hash-bar"></div>
+                            <span class="hash-status">計算中...</span>
+                        </div>
+
+                        <div class="hash-compare">
+                            <div class="compare-item">
+                                <span class="compare-label">字元數：</span>
+                                <span id="char-count">18</span>
+                            </div>
+                            <div class="compare-item">
+                                <span class="compare-label">Hash 前綴：</span>
+                                <span id="hash-prefix">9f86...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetHash()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('hash')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>不可預測</strong>：無法從 Hash 反推原始資料</li>
+                            <li><strong>確定性</strong>：同樣輸入永遠產生同樣 Hash</li>
+                            <li><strong>雪崩效應</strong>：輸入改變一個字元，Hash 完全改變</li>
+                            <li><strong>唯一性</strong>：不同資料幾乎不可能產生相同 Hash</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第四章：區塊連結 ==================== -->
+        <section id="chain" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第四章</div>
+                <h1 class="section-title">區塊連結</h1>
+                <p class="section-subtitle">透過 Previous Hash 將區塊串成不可分割的鏈</p>
+
+                <div class="interactive-area">
+                    <div class="chain-visual" id="chain-visual">
+                        <div class="chain-block" id="chain-block-0">
+                            <div class="block-mini">
+                                <div class="block-mini-header">
+                                    <span>創世區塊 #0</span>
+                                </div>
+                                <div class="block-mini-body">
+                                    <div class="mini-field"><span class="mini-label">Data:</span> <span class="mini-value">Genesis Block</span></div>
+                                    <div class="mini-field"><span class="mini-label">Prev:</span> <span class="mini-value hash-small">000000...</span></div>
+                                    <div class="mini-field"><span class="mini-label">Hash:</span> <span class="mini-value hash-small" id="hash-0">abc123...</span></div>
+                                </div>
+                            </div>
+                            <div class="chain-arrow">→</div>
+                        </div>
+
+                        <div class="chain-block" id="chain-block-1">
+                            <div class="block-mini">
+                                <div class="block-mini-header">
+                                    <span>區塊 #1</span>
+                                </div>
+                                <div class="block-mini-body">
+                                    <div class="mini-field"><span class="mini-label">Data:</span> <span class="mini-value" id="data-1">A→B 10 BTC</span></div>
+                                    <div class="mini-field"><span class="mini-label">Prev:</span> <span class="mini-value hash-small" id="prev-1">abc123...</span></div>
+                                    <div class="mini-field"><span class="mini-label">Hash:</span> <span class="mini-value hash-small" id="hash-1">def456...</span></div>
+                                </div>
+                            </div>
+                            <div class="chain-arrow">→</div>
+                        </div>
+
+                        <div class="chain-block" id="chain-block-2">
+                            <div class="block-mini">
+                                <div class="block-mini-header">
+                                    <span>區塊 #2</span>
+                                </div>
+                                <div class="block-mini-body">
+                                    <div class="mini-field"><span class="mini-label">Data:</span> <span class="mini-value" id="data-2">C→D 5 BTC</span></div>
+                                    <div class="mini-field"><span class="mini-label">Prev:</span> <span class="mini-value hash-small" id="prev-2">def456...</span></div>
+                                    <div class="mini-field"><span class="mini-label">Hash:</span> <span class="mini-value hash-small" id="hash-2">ghi789...</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chain-controls">
+                        <div class="control-group">
+                            <label>區塊 1 資料：</label>
+                            <input type="text" id="chain-data-1" value="A→B 10 BTC" class="code-input">
+                        </div>
+                        <div class="control-group">
+                            <label>區塊 2 資料：</label>
+                            <input type="text" id="chain-data-2" value="C→D 5 BTC" class="code-input">
+                        </div>
+                        <button class="btn btn-secondary" onclick="resetChain()">🔄 重置鏈</button>
+                        <button class="btn btn-primary" onclick="rebuildChain()">🔨 重建區塊鏈</button>
+                    </div>
+
+                    <div class="tamper-zone" id="tamper-zone">
+                        <h4>⚠️ 篡改測試區</h4>
+                        <p>嘗試修改過去區塊的資料：</p>
+                        <div class="tamper-controls">
+                            <select id="tamper-select">
+                                <option value="1">區塊 1</option>
+                                <option value="2">區塊 2</option>
+                            </select>
+                            <input type="text" id="tamper-value" placeholder="修改後的資料" class="code-input">
+                            <button class="btn btn-danger" onclick="tamperBlock()">🚨 篡改</button>
+                        </div>
+                        <div class="tamper-result" id="tamper-result"></div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetChain()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('chain')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>創世區塊</strong>：區塊鏈的第一個區塊，Previous Hash 為 0</li>
+                            <li><strong>鏈接原理</strong>：每個區塊的 Previous Hash 指向前一區塊</li>
+                            <li><strong>防篡改</strong>：改變任何區塊會讓後面所有 Hash 失效</li>
+                            <li><strong>共識必要性</strong>：需要共識機制防止恶意篡改</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第五章：工作量證明 ==================== -->
+        <section id="pow" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第五章</div>
+                <h1 class="section-title">工作量證明 (PoW)</h1>
+                <p class="section-subtitle">點擊「挖礦」，體驗找到符合條件 Hash 的過程</p>
+
+                <div class="interactive-area">
+                    <div class="pow-demo">
+                        <div class="pow-controls">
+                            <div class="pow-field">
+                                <label>難度目標（前導零數量）：</label>
+                                <div class="difficulty-slider">
+                                    <input type="range" id="difficulty" min="1" max="6" value="3" oninput="updateDifficulty()">
+                                    <span id="difficulty-display">3 個零</span>
+                                </div>
+                            </div>
+                            <div class="pow-field">
+                                <label>資料：</label>
+                                <input type="text" id="pow-data" value="交易資料：A轉B 1 BTC" class="code-input">
+                            </div>
+                        </div>
+
+                        <div class="mining-area" id="mining-area">
+                            <div class="mining-info">
+                                <div class="mining-stat">
+                                    <span class="stat-label">嘗試次數：</span>
+                                    <span class="stat-value" id="nonce-display">0</span>
+                                </div>
+                                <div class="mining-stat">
+                                    <span class="stat-label">當前 Hash：</span>
+                                    <span class="stat-value hash-display-mini" id="current-hash-mini">-</span>
+                                </div>
+                                <div class="mining-stat">
+                                    <span class="stat-label">目標：</span>
+                                    <span class="stat-value" id="target-display">000</span>
+                                </div>
+                            </div>
+                            <div class="mining-progress">
+                                <div class="progress-bar" id="pow-progress"></div>
+                            </div>
+                            <div class="mining-result" id="mining-result"></div>
+                        </div>
+
+                        <div class="pow-buttons">
+                            <button class="btn btn-mining" id="mine-btn" onclick="startMining()">⛏️ 開始挖礦</button>
+                            <button class="btn btn-secondary" onclick="stopMining()">⏹️ 停止</button>
+                            <button class="btn btn-secondary" onclick="resetPow()">🔄 重置</button>
+                        </div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetPow()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('pow')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>礦工工作</strong>：不斷改變 Nonce，找出符合難度的 Hash</li>
+                            <li><strong>難度調整</strong>：比特幣每 2016 個區塊調整一次，維持 10 分鐘/區塊</li>
+                            <li><strong>51% 攻擊</strong>：若掌控超過 50% 算力，可逆轉交易</li>
+                            <li><strong>能源消耗</strong>：PoW 的主要批評，導致其他共識機制的發展</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第六章：共識機制 ==================== -->
+        <section id="consensus" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第六章</div>
+                <h1 class="section-title">共識機制</h1>
+                <p class="section-subtitle">模擬區塊鏈分叉與最長鏈原則</p>
+
+                <div class="interactive-area">
+                    <div class="consensus-demo">
+                        <div class="consensus-visual" id="consensus-visual">
+                            <div class="consensus-chain" id="chain-a">
+                                <h4>鏈 A（紅隊）</h4>
+                                <div class="chain-nodes">
+                                    <div class="node" data-height="1">#1</div>
+                                    <div class="node" data-height="2">#2</div>
+                                    <div class="node" data-height="3">#3</div>
+                                    <div class="node orphan" id="chain-a-4">#4</div>
+                                </div>
+                                <div class="chain-length">長度: <span id="len-a">4</span></div>
+                            </div>
+
+                            <div class="consensus-chain" id="chain-b">
+                                <h4>鏈 B（藍隊）</h4>
+                                <div class="chain-nodes">
+                                    <div class="node" data-height="1">#1</div>
+                                    <div class="node" data-height="2">#2</div>
+                                    <div class="node" data-height="3">#3</div>
+                                    <div class="node winning" id="chain-b-4">#4</div>
+                                    <div class="node winning" id="chain-b-5">#5</div>
+                                </div>
+                                <div class="chain-length">長度: <span id="len-b">5</span></div>
+                            </div>
+                        </div>
+
+                        <div class="consensus-status" id="consensus-status">
+                            <div class="status-box">
+                                <h4>🏆 當前共識結果</h4>
+                                <p>鏈 B 成為主鏈！</p>
+                                <p class="small">藍隊的鏈更長，所有節點會自動切换到這條鏈</p>
+                            </div>
+                        </div>
+
+                        <div class="consensus-controls">
+                            <div class="control-row">
+                                <button class="btn btn-chain" onclick="addBlockToChain('a')">➕ 紅隊添加區塊</button>
+                                <button class="btn btn-chain" onclick="addBlockToChain('b')">➕ 藍隊添加區塊</button>
+                            </div>
+                            <button class="btn btn-secondary" onclick="resetConsensus()">🔄 重置</button>
+                        </div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetConsensus()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('consensus')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>分叉</strong>：兩個礦工同時挖出區塊，區塊鏈暫時分叉</li>
+                            <li><strong>最長鏈原則</strong>：網路最終採用最長的鏈作為主鏈</li>
+                            <li><strong>孤立區塊</strong>：較短鏈上的區塊會被拋棄（Orphan Block）</li>
+                            <li><strong>六個確認</strong>：比特幣通常等待 6 個區塊確認認為交易安全</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第七章：錢包與簽名 ==================== -->
+        <section id="wallet" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第七章</div>
+                <h1 class="section-title">錢包與數位簽名</h1>
+                <p class="section-subtitle">理解公鑰、私鑰與簽名驗證的概念</p>
+
+                <div class="interactive-area">
+                    <div class="wallet-demo">
+                        <div class="key-pair">
+                            <div class="key-box private-key">
+                                <h4>🔒 私鑰（只有你自己知道）</h4>
+                                <div class="key-display" id="private-key">0f1e2d3c4b5a69788796a5b4c3d2e1f0a1b2c3d4e5f6071829384756647392</div>
+                                <p class="key-warning">⚠️ 絕對不要告訴任何人！</p>
+                            </div>
+
+                            <div class="key-box public-key">
+                                <h4>🔓 公鑰（可以公開）</h4>
+                                <div class="key-display" id="public-key">04588d2ed9da166cb2f1a8b9f2e6d4f8a1b3c5d7e9f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d</div>
+                                <p class="key-info">這是用私鑰推導出來的</p>
+                            </div>
+
+                            <div class="key-box wallet-address">
+                                <h4>👛 錢包地址（帳號）</h4>
+                                <div class="key-display" id="wallet-address">1A2B3C4D5E6F7G8H9I0JKLMNOPQRSTU</div>
+                                <p class="key-info">這是公鑰的簡短版本</p>
+                            </div>
+                        </div>
+
+                        <div class="signature-demo">
+                            <h4>✍️ 數位簽名演示</h4>
+                            <div class="signature-flow">
+                                <div class="flow-step">
+                                    <div class="step-icon">📝</div>
+                                    <div class="step-content">
+                                        <label>要簽名的訊息：</label>
+                                        <textarea id="sign-message" class="code-input" rows="2" placeholder="輸入要簽名的訊息...">轉帳 1 BTC 給地址 1A2B3C4D</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="flow-arrow">↓</div>
+
+                                <div class="flow-step">
+                                    <div class="step-icon">🔐</div>
+                                    <div class="step-content">
+                                        <label>使用私鑰簽名：</label>
+                                        <button class="btn btn-sign" onclick="signMessage()">🔐 簽名</button>
+                                        <div class="signature-result" id="signature-result"></div>
+                                    </div>
+                                </div>
+
+                                <div class="flow-arrow">↓</div>
+
+                                <div class="flow-step">
+                                    <div class="step-icon">✅</div>
+                                    <div class="step-content">
+                                        <label>驗證簽名：</label>
+                                        <div class="verification-result" id="verification-result">
+                                            <span class="verify-status">等待簽名...</span>
+                                        </div>
+                                        <button class="btn btn-verify" onclick="verifySignature()">🔍 驗證</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tamper-signature">
+                            <h4>🚨 篡改測試</h4>
+                            <p>嘗試修改簽名後的訊息：</p>
+                            <div class="tamper-controls">
+                                <input type="text" id="tamper-message" placeholder="修改後的訊息" class="code-input">
+                                <button class="btn btn-danger" onclick="tamperSignature()">🚨 篡改並驗證</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-btns">
+                        <button class="btn btn-secondary" onclick="resetWallet()">🔄 重置</button>
+                        <button class="btn btn-primary" onclick="nextStep('wallet')">下一步 →</button>
+                    </div>
+
+                    <div class="explanation-box">
+                        <h4>📚 知識點</h4>
+                        <ul>
+                            <li><strong>私鑰</strong>：只有擁有者知道，用於簽名交易</li>
+                            <li><strong>公鑰</strong>：由私鑰推導，可公開，用於驗證簽名</li>
+                            <li><strong>錢包地址</strong>：公鑰的 Hash，類似銀行帳號</li>
+                            <li><strong>數位簽名</strong>：用私鑰對訊息簽名，任何人可用公鑰驗證</li>
+                            <li><strong>不可否認性</strong>：簽名後無法否認是你簽的</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第八章：加密貨幣介紹 ==================== -->
+        <section id="crypto" class="section">
+            <div class="section-inner">
+                <div class="section-badge">第八章</div>
+                <h1 class="section-title">主流加密貨幣</h1>
+                <p class="section-subtitle">了解各區塊鏈的特色與創新</p>
+
+                <div class="crypto-grid">
+                    <!-- 比特幣 -->
+                    <div class="crypto-card" id="crypto-btc">
+                        <div class="crypto-header">
+                            <div class="crypto-icon">₿</div>
+                            <div class="crypto-title">
+                                <h3>比特幣</h3>
+                                <span class="crypto-symbol">BTC</span>
+                            </div>
+                        </div>
+                        <div class="crypto-badge btc">2009 年誕生</div>
+                        <div class="crypto-desc">
+                            <p>第一個去中心化加密貨幣，由中本聰發明，被譽為「數位黃金」</p>
+                        </div>
+                        <div class="crypto-features">
+                            <div class="feature">
+                                <span class="feature-icon">⛏️</span>
+                                <div class="feature-text">
+                                    <strong>共識機制</strong>
+                                    <p>工作量證明（PoW）</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">⏱️</span>
+                                <div class="feature-text">
+                                    <strong>區塊時間</strong>
+                                    <p>約 10 分鐘/區塊</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">📊</span>
+                                <div class="feature-text">
+                                    <strong>最大供應量</strong>
+                                    <p>2100 萬枚（固定）</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="crypto-highlight">
+                            <h4>💡 特色亮點</h4>
+                            <ul>
+                                <li>首個區塊鏈應用，安全性經過十餘年驗證</li>
+                                <li>採用 SHA-256 挖礦演算法</li>
+                                <li>UTXO 帳戶模型</li>
+                                <li>節點網路去中心化程度最高</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-crypto" onclick="expandCrypto('btc')">查看更多</button>
+                    </div>
+
+                    <!-- 以太坊 -->
+                    <div class="crypto-card" id="crypto-eth">
+                        <div class="crypto-header">
+                            <div class="crypto-icon">Ξ</div>
+                            <div class="crypto-title">
+                                <h3>以太坊</h3>
+                                <span class="crypto-symbol">ETH</span>
+                            </div>
+                        </div>
+                        <div class="crypto-badge eth">2015 年誕生</div>
+                        <div class="crypto-desc">
+                            <p>區塊鏈 2.0 代表，支援智慧合約，被譽為「世界電腦」</p>
+                        </div>
+                        <div class="crypto-features">
+                            <div class="feature">
+                                <span class="feature-icon">📜</span>
+                                <div class="feature-text">
+                                    <strong>智慧合約</strong>
+                                    <p>圖靈完整的程式環境</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🔄</span>
+                                <div class="feature-text">
+                                    <strong>升級</strong>
+                                    <p>ETH 2.0 → PoS 共識</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🧩</span>
+                                <div class="feature-text">
+                                    <strong>代幣標準</strong>
+                                    <p>ERC-20、ERC-721 等</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="crypto-highlight">
+                            <h4>💡 特色亮點</h4>
+                            <ul>
+                                <li>支援去中心化應用（DApp）開發</li>
+                                <li>ETH 2.0 採用利害關係證明（PoS）</li>
+                                <li>Gas 費用模型</li>
+                                <li>豐富的 DeFi 與 NFT 生態系統</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-crypto" onclick="expandCrypto('eth')">查看更多</button>
+                    </div>
+
+                    <!-- Solana -->
+                    <div class="crypto-card" id="crypto-sol">
+                        <div class="crypto-header">
+                            <div class="crypto-icon">◎</div>
+                            <div class="crypto-title">
+                                <h3>Solana</h3>
+                                <span class="crypto-symbol">SOL</span>
+                            </div>
+                        </div>
+                        <div class="crypto-badge sol">2020 年誕生</div>
+                        <div class="crypto-desc">
+                            <p>高效能區塊鏈，專注於速度與低費用，採用創新的共識機制</p>
+                        </div>
+                        <div class="crypto-features">
+                            <div class="feature">
+                                <span class="feature-icon">⚡</span>
+                                <div class="feature-text">
+                                    <strong>交易速度</strong>
+                                    <p>最高 65,000 TPS</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">📋</span>
+                                <div class="feature-text">
+                                    <strong>共識機制</strong>
+                                    <p>PoH + PoS 混合</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">💰</span>
+                                <div class="feature-text">
+                                    <strong>平均費用</strong>
+                                    <p>$0.00025/筆交易</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="crypto-highlight">
+                            <h4>💡 特色亮點</h4>
+                            <ul>
+                                <li>歷史證明（PoH）時間戳機制</li>
+                                <li>Gulf Stream 交易處理架構</li>
+                                <li>Sealevel 並行智慧合約執行</li>
+                                <li>適合高频交易與遊戲應用</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-crypto" onclick="expandCrypto('sol')">查看更多</button>
+                    </div>
+
+                    <!-- Cardano -->
+                    <div class="crypto-card" id="crypto-ada">
+                        <div class="crypto-header">
+                            <div class="crypto-icon">₳</div>
+                            <div class="crypto-title">
+                                <h3>Cardano</h3>
+                                <span class="crypto-symbol">ADA</span>
+                            </div>
+                        </div>
+                        <div class="crypto-badge ada">2017 年誕生</div>
+                        <div class="crypto-desc">
+                            <p>學術驅動的區塊鏈，以嚴格的學術審查與同行評議聞名</p>
+                        </div>
+                        <div class="crypto-features">
+                            <div class="feature">
+                                <span class="feature-icon">🎓</span>
+                                <div class="feature-text">
+                                    <strong>開發方法</strong>
+                                    <p>基於同行評議的學術研究</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">⚖️</span>
+                                <div class="feature-text">
+                                    <strong>共識機制</strong>
+                                    <p>Ouroboros PoS</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🏗️</span>
+                                <div class="feature-text">
+                                    <strong>分層架構</strong>
+                                    <p>結算層 + 運算層分離</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="crypto-highlight">
+                            <h4>💡 特色亮點</h4>
+                            <ul>
+                                <li>由以太坊共同創辦人 Charles Hoskinson 創建</li>
+                                <li> Haskell 編寫，強調形式化驗證</li>
+                                <li>Ouroboros 共識協議學術論文 peer-reviewed</li>
+                                <li>專注於永續性、可擴展性與互操作性</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-crypto" onclick="expandCrypto('ada')">查看更多</button>
+                    </div>
+                </div>
+
+                <div class="crypto-comparison">
+                    <h3>📊 加密貨幣比較表</h3>
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>特性</th>
+                                    <th>比特幣 BTC</th>
+                                    <th>以太坊 ETH</th>
+                                    <th>Solana SOL</th>
+                                    <th>Cardano ADA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>共識機制</td>
+                                    <td>PoW (SHA-256)</td>
+                                    <td>PoS</td>
+                                    <td>PoH + PoS</td>
+                                    <td>Ouroboros PoS</td>
+                                </tr>
+                                <tr>
+                                    <td>區塊時間</td>
+                                    <td>~10 分鐘</td>
+                                    <td>~12 秒</td>
+                                    <td>~0.4 秒</td>
+                                    <td>~20 秒</td>
+                                </tr>
+                                <tr>
+                                    <td>TPS</td>
+                                    <td>~7</td>
+                                    <td>~30</td>
+                                    <td>65,000+</td>
+                                    <td>~1,000</td>
+                                </tr>
+                                <tr>
+                                    <td>智慧合約</td>
+                                    <td>❌ 有限</td>
+                                    <td>✅ 完整</td>
+                                    <td>✅ 完整</td>
+                                    <td>✅ 完整</td>
+                                </tr>
+                                <tr>
+                                    <td>主要用途</td>
+                                    <td>價值儲存</td>
+                                    <td>DApp / DeFi</td>
+                                    <td>高效 DApp</td>
+                                    <td>學術研究</td>
+                                </tr>
+                                <tr>
+                                    <td>最大供應量</td>
+                                    <td>2100 萬</td>
+                                    <td>無上限</td>
+                                    <td>無上限</td>
+                                    <td>450 億</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="control-btns">
+                    <button class="btn btn-primary" onclick="nextStep('crypto')">完成學習 🎉</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 完成頁面 ==================== -->
+        <section id="complete" class="section complete-section">
+            <div class="section-inner">
+                <div class="complete-content">
+                    <div class="complete-icon">🎓</div>
+                    <h1>恭喜完成區塊鏈互動課程！</h1>
+                    <p>你已經學會了區塊鏈的核心概念</p>
+                    
+                    <div class="learned-summary">
+                        <h3>📚 學習總結</h3>
+                        <div class="learned-items">
+                            <div class="learned-item">✅ 區塊結構（Index, Data, Hash, Nonce）</div>
+                            <div class="learned-item">✅ Hash 計算與雪崩效應</div>
+                            <div class="learned-item">✅ 區塊連結與防篡改機制</div>
+                            <div class="learned-item">✅ 工作量證明（PoW）挖礦原理</div>
+                            <div class="learned-item">✅ 共識機制與最長鏈原則</div>
+                            <div class="learned-item">✅ 公鑰、私鑰與數位簽名</div>
+                            <div class="learned-item">✅ 四大加密貨幣特色比較</div>
+                        </div>
+                    </div>
+
+                    <div class="next-steps">
+                        <h3>🚀 下一步</h3>
+                        <p>想要深入學習？建議：</p>
+                        <ul>
+                            <li>閱讀比特幣白皮書</li>
+                            <li>嘗試使用 MetaMask 錢包</li>
+                            <li>學習 Solidity 智慧合約開發</li>
+                            <li>關注區塊鏈最新發展動態</li>
+                        </ul>
+                    </div>
+
+                    <div class="restart-btn">
+                        <button class="btn btn-primary large" onclick="restartCourse()">🔄 重新開始課程</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部裝飾 -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>區塊鏈互動課程｜用 JavaScript 學區塊鏈</p>
+            <p class="footer-note">純靜態網站，無需後端｜適合新手入門</p>
+        </div>
+    </footer>
+
+    <script src="js/blockchain.js"></script>
+</body>
+</html>
