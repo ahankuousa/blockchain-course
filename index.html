@@ -8,6 +8,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <!-- BlockEdu CDN dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        [v-cloak] { display: none; }
+        .vue-demo-section { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .vue-demo-section ::-webkit-scrollbar { width: 8px; height: 8px; }
+        .vue-demo-section ::-webkit-scrollbar-track { background: #0f172a; }
+        .vue-demo-section ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .vue-demo-section ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
 </head>
 <body>
     <!-- 頂部 Cyan 裝飾條 -->
@@ -25,6 +37,7 @@
                 <a href="#block-structure" class="nav-link">區塊結構</a>
                 <a href="#hash" class="nav-link">Hash 計算</a>
                 <a href="#chain" class="nav-link">區塊連結</a>
+                <a href="#blockedu-demo" class="nav-link">互動展示</a>
                 <a href="#pow" class="nav-link">工作量證明</a>
                 <a href="#consensus" class="nav-link">共識機制</a>
                 <a href="#wallet" class="nav-link">錢包與簽名</a>
@@ -287,6 +300,113 @@
                             <li><strong>共識必要性</strong>：需要共識機制防止恶意篡改</li>
                         </ul>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 互動式區塊鏈展示（BlockEdu） ==================== -->
+        <section id="blockedu-demo" class="section vue-demo-section" style="background: #0f172a;">
+            <div class="max-w-6xl mx-auto px-4 py-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-100 mb-3">🎮 互動式區塊鏈展示</h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto mb-6">
+                        在下面的區塊鏈中，<strong class="text-cyan-400">任意修改資料</strong>都會讓區塊變成紅色（無效）。
+                        點擊<strong class="text-cyan-400">「開始挖礦」</strong>修復它！
+                    </p>
+                    
+                    <!-- 難度調整 -->
+                    <div class="inline-flex items-center gap-4 bg-slate-800/80 p-4 rounded-2xl border border-slate-700 mb-6">
+                        <span class="text-sm text-slate-300 font-medium">PoW 難度（前導零數量）：</span>
+                        <input type="range" id="be-difficulty" min="1" max="5" value="3"
+                            class="accent-cyan-400 w-32 cursor-pointer"
+                            oninput="updateBeDifficulty()">
+                        <span id="be-diff-display" class="font-mono text-cyan-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-600 w-8 text-center">3</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-2">目前設定：區塊 Hash 開頭必須是 <span id="be-target" class="font-mono text-cyan-400 bg-cyan-900/30 px-2 py-0.5 rounded">000</span></p>
+                </div>
+
+                <!-- Vue 區塊鏈展示 -->
+                <div id="be-app" v-cloak class="flex flex-col gap-3 items-center pb-8 w-full">
+                    <template v-for="(block, index) in blocks" :key="block.id">
+                        <div :class="[
+                            'w-full max-w-3xl rounded-2xl border-2 p-5 transition-all duration-300 relative shadow-lg',
+                            isValid(block) && !isMining[index]
+                                ? 'bg-emerald-900/10 border-emerald-500/40'
+                                : isMining[index]
+                                    ? 'bg-slate-800/70 border-cyan-500/60'
+                                    : 'bg-rose-900/10 border-rose-500/50'
+                        ]">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-database"
+                                        :class="isMining[index] ? 'text-cyan-400 animate-bounce' : isValid(block) ? 'text-emerald-400' : 'text-rose-400'"></i>
+                                    Block #{{ block.id }}
+                                </h3>
+                                <span :class="[
+                                    'text-xs font-mono px-2 py-1 rounded',
+                                    isMining[index] ? 'bg-cyan-500/20 text-cyan-300 animate-pulse' : isValid(block) ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
+                                ]">
+                                    {{ isMining[index] ? '挖礦中...' : isValid(block) ? '有效 ✓' : '無效 ✗' }}
+                                </span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Nonce</label>
+                                    <input type="number" v-model.number="block.nonce"
+                                        @input="onInputChanged(index)"
+                                        :disabled="isMining[index]"
+                                        class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Data</label>
+                                    <textarea v-model="block.data" rows="2"
+                                        @input="onInputChanged(index)"
+                                        :disabled="isMining[index]"
+                                        class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 resize-none transition-colors"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Previous Hash</label>
+                                    <div class="font-mono text-xs text-slate-500 break-all bg-slate-900/50 rounded-lg px-3 py-2 border border-slate-800">
+                                        {{ block.prevHash || '0000000000000000000000000000000000000000000000000000000000000000' }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-slate-400 uppercase tracking-wider">Hash</label>
+                                        <span class="text-xs font-mono text-slate-500">
+                                            <i class="fa-solid fa-microchip"></i> 嘗試次數：{{ (block.hashCount||0).toLocaleString() }}
+                                        </span>
+                                    </div>
+                                    <div :class="[
+                                        'font-mono text-xs break-all rounded-lg px-3 py-2 border transition-colors',
+                                        isMining[index] ? 'bg-cyan-950/30 border-cyan-500/50 text-cyan-400' :
+                                        isValid(block) ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-400' :
+                                        'bg-rose-950/30 border-rose-800/50 text-rose-400'
+                                    ]">
+                                        {{ block.hash || '等待計算...' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <button @click="mineBlock(index)"
+                                :disabled="isMining[index] || isValid(block)"
+                                :class="[
+                                    'mt-4 w-full py-2.5 rounded-xl font-bold flex justify-center items-center gap-2 transition-all text-sm',
+                                    isMining[index] || isValid(block)
+                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25'
+                                ]">
+                                <i class="fa-solid" :class="isValid(block) ? 'fa-check' : 'fa-hammer'"></i>
+                                {{ isMining[index] ? '⛏️ 挖礦中...' : isValid(block) ? '已驗證' : '⛏️ 開始挖礦' }}
+                            </button>
+                        </div>
+                        <div class="flex justify-center py-1">
+                            <i class="fa-solid fa-link text-2xl text-slate-600 transform rotate-90"></i>
+                        </div>
+                    </template>
+                    <button @click="addBlock"
+                        class="mt-2 px-6 py-3 bg-slate-800/80 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl border border-slate-700 hover:border-cyan-400 transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> 增加新區塊
+                    </button>
                 </div>
             </div>
         </section>
@@ -839,5 +959,194 @@
     </footer>
 
     <script src="js/blockchain.js"></script>
+    
+    <!-- BlockEdu Vue 互動區塊鏈應用 -->
+    <script>
+    (function(){
+        // ===== SHA-256（純 JS 版，確保區塊鏈展示正常運作） =====
+        function sha256(ascii) {
+            ascii = unescape(encodeURIComponent(ascii));
+            function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+            let mathPow = Math.pow, maxWord = mathPow(2, 32), lengthProperty = 'length';
+            let i, j, result = '', words = [];
+            let asciiBitLength = ascii[lengthProperty] * 8;
+            let hash = sha256.h = sha256.h || [];
+            let k = sha256.k = sha256.k || [];
+            let primeCounter = k[lengthProperty], isComposite = {};
+            for (let candidate = 2; primeCounter < 64; candidate++) {
+                if (!isComposite[candidate]) {
+                    for (i = 0; i < 313; i += candidate) { isComposite[i] = candidate; }
+                    hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                    k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                }
+            }
+            ascii += '\x80';
+            while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+            for (i = 0; i < ascii[lengthProperty]; i++) {
+                j = ascii.charCodeAt(i);
+                if (j >> 8) return;
+                words[i >> 2] |= j << ((3 - i % 4) * 8);
+            }
+            words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+            words[words[lengthProperty]] = (asciiBitLength);
+            for (j = 0; j < words[lengthProperty];) {
+                let w = words.slice(j, j += 16), oldHash = hash;
+                hash = hash.slice(0, 8);
+                for (i = 0; i < 64; i++) {
+                    let w15 = w[i - 15], w2 = w[i - 2];
+                    let a = hash[0], e = hash[4];
+                    let temp1 = hash[7] + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                        + ((e & hash[5]) ^ ((~e) & hash[6])) + k[i]
+                        + (w[i] = (i < 16) ? w[i] : (w[i - 16] + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10)))|0);
+                    let temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+                    hash = [(temp1 + temp2)|0].concat(hash);
+                    hash[4] = (hash[4] + temp1)|0;
+                }
+                for (i = 0; i < 8; i++) { hash[i] = (hash[i] + oldHash[i])|0; }
+            }
+            for (i = 0; i < 8; i++) {
+                for (j = 3; j + 1; j--) {
+                    let b = (hash[i] >> (j * 8)) & 255;
+                    result += ((b < 16) ? 0 : '') + b.toString(16);
+                }
+            }
+            return result;
+        }
+
+        // ===== 難度同步函式 =====
+        function updateBeDifficulty() {
+            var diff = document.getElementById('be-difficulty').value;
+            document.getElementById('be-diff-display').textContent = diff;
+            document.getElementById('be-target').textContent = '0'.repeat(parseInt(diff));
+        }
+        window.updateBeDifficulty = updateBeDifficulty;
+
+        // ===== Vue 3 應用 =====
+        var beApp = null;
+        var beVue = null;
+
+        function initBlockEdu() {
+            // 等待 DOM 就緒
+            if (!document.getElementById('be-app')) {
+                setTimeout(initBlockEdu, 100);
+                return;
+            }
+
+            // 避免重複掛載
+            if (beApp) return;
+
+            var diffVal = parseInt(document.getElementById('be-difficulty') ? document.getElementById('be-difficulty').value : 3);
+
+            beVue = Vue.createApp({
+                setup: function() {
+                    var difficulty = Vue.ref(diffVal);
+                    var difficultyPrefix = Vue.computed(function() { return '0'.repeat(difficulty.value); });
+
+                    var blocks = Vue.ref([
+                        { id: 1, nonce: 0, data: 'Genesis Block (創世區塊)', prevHash: '0000000000000000000000000000000000000000000000000000000000000000', hash: '', hashCount: 0 },
+                        { id: 2, nonce: 0, data: 'Alice 轉帳給 Bob 10 BTC', prevHash: '', hash: '', hashCount: 0 },
+                        { id: 3, nonce: 0, data: 'Bob 轉帳給 Charlie 5 BTC', prevHash: '', hash: '', hashCount: 0 }
+                    ]);
+                    var isMining = Vue.ref({});
+
+                    function calculateHash(id, nonce, data, prevHash) {
+                        return sha256(id.toString() + nonce.toString() + data + prevHash);
+                    }
+
+                    function isValid(block) {
+                        if (!block.hash) return false;
+                        return block.hash.startsWith(difficultyPrefix.value) && block.hash === calculateHash(block.id, block.nonce, block.data, block.prevHash);
+                    }
+
+                    function updateChainFrom(startIndex) {
+                        for (var i = startIndex; i < blocks.value.length; i++) {
+                            if (i > 0) blocks.value[i].prevHash = blocks.value[i - 1].hash;
+                            if (!isMining.value[i]) {
+                                blocks.value[i].hash = calculateHash(blocks.value[i].id, blocks.value[i].nonce, blocks.value[i].data, blocks.value[i].prevHash);
+                                blocks.value[i].hashCount = 1;
+                            }
+                        }
+                    }
+
+                    function onInputChanged(index) { updateChainFrom(index); }
+
+                    function mineBlock(index) {
+                        if (isMining.value[index]) return;
+                        isMining.value[index] = true;
+                        var block = blocks.value[index];
+                        var nonce = 0;
+                        var attempts = 0;
+                        var targetPrefix = difficultyPrefix.value;
+                        var BATCH_SIZE = 500;
+
+                        var computeBatch = function() {
+                            if (!isMining.value[index]) return;
+                            targetPrefix = difficultyPrefix.value;
+                            for (var i = 0; i < BATCH_SIZE; i++) {
+                                attempts++;
+                                var hash = calculateHash(block.id, nonce, block.data, block.prevHash);
+                                block.nonce = nonce;
+                                block.hashCount = attempts;
+                                block.hash = hash;
+                                if (hash.startsWith(targetPrefix)) {
+                                    isMining.value[index] = false;
+                                    updateChainFrom(index + 1);
+                                    return;
+                                }
+                                nonce++;
+                            }
+                            setTimeout(computeBatch, 0);
+                        };
+                        computeBatch();
+                    }
+
+                    function addBlock() {
+                        var prevBlock = blocks.value[blocks.value.length - 1];
+                        var newIndex = blocks.value.length;
+                        blocks.value.push({
+                            id: prevBlock.id + 1,
+                            nonce: 0,
+                            data: '',
+                            prevHash: prevBlock.hash,
+                            hash: '',
+                            hashCount: 0
+                        });
+                        mineBlock(newIndex);
+                    }
+
+                    // 初始化挖礦
+                    var initHash = function() {
+                        var tp = difficultyPrefix.value;
+                        for (var i = 0; i < blocks.value.length; i++) {
+                            if (i > 0) blocks.value[i].prevHash = blocks.value[i - 1].hash;
+                            var nonce = 0, attempts = 1;
+                            var hash = calculateHash(blocks.value[i].id, nonce, blocks.value[i].data, blocks.value[i].prevHash);
+                            while (!hash.startsWith(tp)) { nonce++; attempts++; hash = calculateHash(blocks.value[i].id, nonce, blocks.value[i].data, blocks.value[i].prevHash); }
+                            blocks.value[i].nonce = nonce;
+                            blocks.value[i].hashCount = attempts;
+                            blocks.value[i].hash = hash;
+                        }
+                    };
+
+                    Vue.onMounted(initHash);
+
+                    return { blocks: blocks, isMining: isMining, difficulty: difficulty, difficultyPrefix: difficultyPrefix, isValid: isValid, onInputChanged: onInputChanged, mineBlock: mineBlock, addBlock: addBlock };
+                }
+            });
+
+            beApp = beVue.mount('#be-app');
+        }
+
+        // 延遲啟動，確保 Vue CDN 載入完成
+        if (typeof Vue === 'undefined') {
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/vue@3/dist/vue.global.js';
+            script.onload = initBlockEdu;
+            document.head.appendChild(script);
+        } else {
+            initBlockEdu();
+        }
+    })();
+    </script>
 </body>
 </html>
