@@ -319,7 +319,7 @@
                         <span class="text-sm text-slate-300 font-medium">PoW 難度（前導零數量）：</span>
                         <input type="range" id="be-difficulty" min="1" max="5" value="3"
                             class="accent-cyan-400 w-32 cursor-pointer"
-                            oninput="updateBeDifficulty()">
+                            oninput="syncBeDifficulty(this.value)">
                         <span id="be-diff-display" class="font-mono text-cyan-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-600 w-8 text-center">3</span>
                     </div>
                     <p class="text-xs text-slate-500 mb-2">目前設定：區塊 Hash 開頭必須是 <span id="be-target" class="font-mono text-cyan-400 bg-cyan-900/30 px-2 py-0.5 rounded">000</span></p>
@@ -1014,12 +1014,16 @@
         }
 
         // ===== 難度同步函式 =====
-        function updateBeDifficulty() {
-            var diff = document.getElementById('be-difficulty').value;
+        function syncBeDifficulty(val) {
+            var diff = parseInt(val);
             document.getElementById('be-diff-display').textContent = diff;
-            document.getElementById('be-target').textContent = '0'.repeat(parseInt(diff));
+            document.getElementById('be-target').textContent = '0'.repeat(diff);
+            // 同步更新 Vue app 的 difficulty ref
+            if (window.blockEduApp && window.blockEduApp.difficulty) {
+                window.blockEduApp.difficulty.value = diff;
+            }
         }
-        window.updateBeDifficulty = updateBeDifficulty;
+        window.syncBeDifficulty = syncBeDifficulty;
 
         // ===== Vue 3 應用 =====
         var beApp = null;
@@ -1135,6 +1139,7 @@
             });
 
             beApp = beVue.mount('#be-app');
+            window.blockEduApp = beApp; // 暴露到全域供滑桿同步用
         }
 
         // 延遲啟動，確保 Vue CDN 載入完成
