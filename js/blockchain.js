@@ -642,18 +642,45 @@ async function tamperSignature() {
         return;
     }
     
+    // 計算篡改後的新簽名（用於比對）
+    const tamperedHash = await simpleHash(tamperedMessage + 'private-key');
+    const tamperedSig = 'SIG_' + tamperedHash.substring(0, 32).toUpperCase();
+    
     const verificationResult = document.getElementById('verification-result');
     if (verificationResult) {
         verificationResult.innerHTML = '<span class="verify-status invalid">❌ 簽名驗證失敗！</span><br>訊息被篡改，Hash 不匹配';
     }
     
-    // 顯示篡改警告
-    const tamperedEl = document.createElement('div');
-    tamperedEl.style.cssText = 'margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-red); border-radius: 8px; color: var(--accent-red); font-size: 0.875rem;';
-    tamperedEl.innerHTML = `<strong>🚨 篡改檢測！</strong><br>原始訊息：${currentMessage}<br>篡改後：${tamperedMessage}<br>Hash 不匹配，簽名失效！`;
+    // 顯示篡改比對框
+    const comparisonEl = document.createElement('div');
+    comparisonEl.style.cssText = 'margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); border-radius: 8px; font-size: 0.8rem;';
+    comparisonEl.innerHTML = `
+        <strong style="color: var(--accent-red);">🚨 簽名比對結果</strong>
+        <div style="margin-top: 0.75rem; display: grid; gap: 0.5rem;">
+            <div style="color: var(--text-muted);">
+                <strong>原始訊息：</strong><br>
+                <span style="font-family: var(--font-mono); color: var(--accent-green); word-break: break-all;">${currentMessage}</span>
+            </div>
+            <div style="color: var(--accent-green); font-family: var(--font-mono); font-size: 0.75rem; word-break: break-all;">
+                ✅ 原始簽名：${walletSignature}
+            </div>
+            <hr style="border-color: rgba(239,68,68,0.3); margin: 0.5rem 0;">
+            <div style="color: var(--text-muted);">
+                <strong>篡改訊息：</strong><br>
+                <span style="font-family: var(--font-mono); color: var(--accent-red); word-break: break-all;">${tamperedMessage}</span>
+            </div>
+            <div style="color: var(--accent-red); font-family: var(--font-mono); font-size: 0.75rem; word-break: break-all;">
+                ❌ 篡改後簽名：${tamperedSig}
+            </div>
+        </div>
+        <div style="margin-top: 0.75rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 6px; color: var(--accent-yellow); font-size: 0.75rem;">
+            ⚠️ 訊息只要改一個字，簽名就完全不同——這就是區塊鏈的「雪崩效應」
+        </div>
+    `;
     
     if (verificationResult) {
-        verificationResult.appendChild(tamperedEl);
+        verificationResult.innerHTML = '<span class="verify-status invalid">❌ 簽名驗證失敗！</span><br>訊息被篡改，Hash 不匹配';
+        verificationResult.appendChild(comparisonEl);
     }
 }
 
