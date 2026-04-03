@@ -387,64 +387,66 @@ async function startMining() {
     if (isMining) return;
     
     const mineBtn = document.getElementById('mine-btn');
+    const resultEl = document.getElementById('mining-result');
     if (mineBtn) {
         mineBtn.disabled = true;
-        mineBtn.textContent = '⛏️ 挖礦中...';
+        mineBtn.textContent = '⛏️ 運算中...';
     }
     
     isMining = true;
     const difficulty = parseInt(document.getElementById('difficulty')?.value || 3);
     const data = document.getElementById('pow-data')?.value || '';
     const target = '0'.repeat(difficulty);
+    const targetDisplay = document.getElementById('target-display');
+    if (targetDisplay) targetDisplay.textContent = target;
     
     let nonce = 0;
-    const maxIterations = 100000;
+    let attempts = 0;
+    const BATCH_SIZE = 800; // 每批運算次數，越小越順暢但越慢
     
-    miningInterval = setInterval(async () => {
-        if (!isMining) {
-            clearInterval(miningInterval);
-            return;
-        }
+    // 清除之前的結果
+    if (resultEl) {
+        resultEl.className = 'mining-result';
+        resultEl.innerHTML = '';
+    }
+    
+    const computeBatch = async () => {
+        if (!isMining) return;
         
-        // 嘗試計算 Hash
-        const hashInput = data + nonce.toString();
-        const hash = await simpleHash(hashInput);
-        
-        // 更新顯示
-        document.getElementById('nonce-display').textContent = nonce;
-        document.getElementById('current-hash-mini').textContent = hash.substring(0, 20) + '...';
-        
-        // 更新進度條
-        const progress = Math.min((nonce / maxIterations) * 100, 99);
-        document.getElementById('pow-progress').style.width = progress + '%';
-        
-        // 檢查是否找到符合條件的 Hash
-        if (hash.substring(0, difficulty) === target) {
-            stopMining();
+        for (let i = 0; i < BATCH_SIZE; i++) {
+            attempts++;
+            const hashInput = data + nonce.toString();
+            const hash = await simpleHash(hashInput);
             
-            const resultEl = document.getElementById('mining-result');
-            if (resultEl) {
-                resultEl.className = 'mining-result success';
-                resultEl.innerHTML = `
-                    <strong>🎉 挖礦成功！</strong><br>
-                    Nonce: ${nonce}<br>
-                    Hash: ${hash}<br>
-                    符合條件：前 ${difficulty} 個字元為 0
-                `;
+            // 即時更新顯示
+            document.getElementById('nonce-display').textContent = attempts.toLocaleString();
+            document.getElementById('current-hash-mini').textContent = hash;
+            
+            // 檢查是否找到
+            if (hash.substring(0, difficulty) === target) {
+                // 🎉 挖礦成功！
+                stopMining();
+                if (resultEl) {
+                    resultEl.className = 'mining-result success';
+                    resultEl.innerHTML = `
+                        <strong>🎉 挖礦成功！</strong><br>
+                        Nonce：${nonce}（嘗試了 ${attempts.toLocaleString()} 次）<br>
+                        Hash：${hash}<br>
+                        ✅ 前 ${difficulty} 個字元為 0，滿足難度條件
+                    `;
+                }
+                document.getElementById('pow-progress').style.width = '100%';
+                document.getElementById('pow-progress').style.background = 'linear-gradient(90deg, #06b6d4, #818cf8)';
+                return;
             }
-            
-            document.getElementById('pow-progress').style.width = '100%';
-            return;
+            nonce++;
         }
         
-        nonce++;
-        
-        // 防止過度運算
-        if (nonce > maxIterations) {
-            stopMining();
-            alert('達到最大迭代次數，請嘗試降低難度或更短的資料');
-        }
-    }, 10);
+        // 繼續下一批
+        setTimeout(computeBatch, 0);
+    };
+    
+    computeBatch();
 }
 
 function stopMining() {
@@ -461,6 +463,7 @@ function resetPow() {
     document.getElementById('nonce-display').textContent = '0';
     document.getElementById('current-hash-mini').textContent = '-';
     document.getElementById('pow-progress').style.width = '0%';
+    document.getElementById('pow-progress').style.background = '';
     document.getElementById('mining-result').className = 'mining-result';
     document.getElementById('mining-result').innerHTML = '';
     document.getElementById('pow-data').value = '交易資料：A轉B 1 BTC';

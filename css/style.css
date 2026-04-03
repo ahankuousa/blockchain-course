@@ -1878,3 +1878,22 @@ main {
         height: 3px !important;
     }
 }
+
+/* === 挖礦動畫增強 === */
+#current-hash-mini {
+    font-size: 0.75rem;
+    word-break: break-all;
+    transition: color 0.1s;
+}
+
+.mining-result.success {
+    background: rgba(6, 182, 212, 0.1) !important;
+    border-color: var(--accent-cyan) !important;
+}
+
+#pow-progress {
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-indigo));
+    border-radius: 4px;
+    transition: width 0.15s ease;
+}

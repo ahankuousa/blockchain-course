@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockEdu 區塊鏈互動學院</title>
+    
+    <!-- 引入 Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 引入 Vue 3 (CDN) 用於資料綁定與互動邏輯 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- 引入 FontAwesome 圖示庫 (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 自訂一些簡單的滾動條樣式與字體 */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        [v-cloak] { display: none; } /* 避免 Vue 渲染前閃爍 */
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans selection:bg-cyan-500/30">
+
+    <!-- Vue 應用程式掛載點 -->
+    <div id="app" v-cloak class="min-h-screen flex flex-col">
+        
+        <!-- 導覽列 -->
+        <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-2 text-cyan-400 font-bold text-xl">
+                    <i class="fa-solid fa-database text-2xl"></i>
+                    <span>BlockEdu 區塊鏈學院</span>
+                </div>
+                <div class="hidden md:flex gap-6 text-sm font-medium text-slate-400">
+                    <a href="#intro" class="hover:text-cyan-400 transition-colors">什麼是區塊鏈？</a>
+                    <a href="#demo" class="hover:text-cyan-400 transition-colors">互動展示</a>
+                    <a href="#crypto" class="hover:text-cyan-400 transition-colors">加密貨幣特色</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 英雄區塊 (Hero) -->
+        <header class="max-w-6xl mx-auto px-6 py-20 text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+                深入淺出 <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">區塊鏈技術</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                透過網頁互動的方式，一步步帶你了解區塊鏈的核心原理：雜湊、區塊、鏈結以及挖礦，並認識當今主流的加密貨幣。
+            </p>
+        </header>
+
+        <!-- 概念介紹區塊 -->
+        <section id="intro" class="max-w-6xl mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50 hover:border-cyan-500/50 transition-colors">
+                    <i class="fa-solid fa-shield-halved text-4xl text-cyan-400 mb-4 block"></i>
+                    <h3 class="text-xl font-bold mb-3">不可篡改性</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        每個區塊都包含前一個區塊的「指紋(雜湊值)」。如果有人試圖修改歷史資料，後續所有的區塊都會失效。
+                    </p>
+                </div>
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50 hover:border-blue-500/50 transition-colors">
+                    <i class="fa-solid fa-microchip text-4xl text-blue-400 mb-4 block"></i>
+                    <h3 class="text-xl font-bold mb-3">工作量證明 (PoW)</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        也就是「挖礦」。電腦必須耗費算力找出一個特定的數字 (Nonce)，讓產生的雜湊值符合特定規則 (例如開頭有幾個 0)。
+                    </p>
+                </div>
+                <div class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50 hover:border-purple-500/50 transition-colors">
+                    <i class="fa-solid fa-globe text-4xl text-purple-400 mb-4 block"></i>
+                    <h3 class="text-xl font-bold mb-3">去中心化</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        區塊鏈不依賴單一伺服器，而是由全球無數個節點共同維護一份相同的帳本，確保公開透明與安全性。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 互動展示區塊 (核心) -->
+        <section id="demo" class="max-w-7xl mx-auto px-6 py-16">
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl font-bold mb-4">互動式區塊鏈展示</h2>
+                
+                <!-- 動態調整難度面板 -->
+                <div class="my-6 bg-slate-800/60 p-5 rounded-2xl border border-slate-700 max-w-lg mx-auto flex flex-col gap-4 shadow-lg transition-all">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-cyan-400"></i> PoW 挖礦難度 (前置 0 數量)：
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="range" 
+                                min="1" 
+                                max="5" 
+                                v-model.number="difficulty" 
+                                class="w-32 accent-cyan-500 cursor-pointer"
+                            >
+                            <span class="font-mono text-cyan-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-700 w-8 text-center">
+                                {{ difficulty }}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 text-left leading-relaxed">
+                        ⚠️ 提示：難度決定了雜湊值開頭必須有幾個 0。難度越高，計算所需的時間越久（為避免瀏覽器卡住，這裡限制最高為 5）。你可以試著調高難度，看看原本的區塊會發生什麼事！
+                    </p>
+                </div>
+
+                <p class="text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                    在目前的設定下，**區塊雜湊值開頭必須是 <span class="text-cyan-400 font-mono bg-cyan-900/30 px-2 py-0.5 rounded">{{ difficultyPrefix }}</span>** 才算有效。
+                    <br />
+                    💡 <span class="text-rose-400">動手試試看：</span>隨便修改某個區塊的「Data」，你會發現該區塊變紅（失效），且因為連鎖反應，後面的區塊也全部失效！點擊「挖礦」來修復鏈結，體會挖礦的跳動感。
+                </p>
+            </div>
+
+            <!-- 上下排版 (flex-col) 且置中對齊 -->
+            <div class="flex flex-col gap-4 items-center pb-8 w-full">
+                
+                <!-- Vue 迴圈渲染每一個區塊 -->
+                <template v-for="(block, index) in blocks" :key="block.id">
+                    
+                    <!-- 區塊卡片 -->
+                    <div :class="[
+                            'w-full max-w-3xl rounded-2xl border-2 p-6 transition-all duration-300 relative shadow-lg',
+                            isValid(block) && !isMining[index]
+                                ? 'bg-emerald-900/10 border-emerald-500/30 hover:border-emerald-500/60' 
+                                : isMining[index]
+                                    ? 'bg-slate-800/50 border-cyan-500/50 shadow-cyan-900/20' 
+                                    : 'bg-rose-900/10 border-rose-500/50 hover:border-rose-500 shadow-rose-900/20'
+                        ]">
+                        
+                        <!-- 區塊標題 -->
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-database" :class="isMining[index] ? 'text-cyan-400 animate-bounce' : isValid(block) ? 'text-emerald-400' : 'text-rose-400'"></i>
+                                Block #{{ block.id }}
+                            </h3>
+                            <span :class="[
+                                'text-xs font-mono px-2 py-1 rounded transition-colors',
+                                isMining[index] ? 'bg-cyan-500/20 text-cyan-300 animate-pulse' : isValid(block) ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'
+                            ]">
+                                {{ isMining[index] ? 'Mining... (挖礦中)' : isValid(block) ? 'Valid (有效)' : 'Invalid (無效)' }}
+                            </span>
+                        </div>
+
+                        <!-- 輸入欄位 -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Nonce (隨機數)</label>
+                                <!-- 雙向綁定 Nonce，加入動態樣式反映挖礦狀態 -->
+                                <input 
+                                    type="number" 
+                                    v-model.number="block.nonce"
+                                    @input="onInputChanged(index)"
+                                    :disabled="isMining[index]"
+                                    :class="[
+                                        'w-full bg-slate-950 border rounded-lg px-3 py-2 text-sm font-mono focus:outline-none transition-colors',
+                                        isMining[index] ? 'border-cyan-500/50 text-cyan-400 opacity-80' : 'border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500'
+                                    ]"
+                                />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Data (交易資料)</label>
+                                <textarea 
+                                    rows="3"
+                                    v-model="block.data"
+                                    @input="onInputChanged(index)"
+                                    :disabled="isMining[index]"
+                                    :class="[
+                                        'w-full bg-slate-950 border rounded-lg px-3 py-2 text-sm focus:outline-none resize-none transition-colors',
+                                        isMining[index] ? 'border-slate-800 text-slate-500 opacity-50 cursor-not-allowed' : 'border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500'
+                                    ]"
+                                ></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs text-slate-400 uppercase tracking-wider mb-1">Previous Hash (前區塊雜湊)</label>
+                                <div class="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-500 break-all">
+                                    {{ block.prevHash || '0000000000000000000000000000000000000000000000000000000000000000' }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="block text-xs text-slate-400 uppercase tracking-wider">Hash (當前雜湊)</label>
+                                    <!-- 新增：顯示運算次數 -->
+                                    <span class="text-xs font-mono transition-colors" :class="isMining[index] ? 'text-cyan-400' : 'text-slate-500'">
+                                        <i class="fa-solid fa-microchip"></i> 運算次數: {{ (block.hashCount || 0).toLocaleString() }}
+                                    </span>
+                                </div>
+                                <div :class="[
+                                    'w-full border rounded-lg px-3 py-2 text-xs font-mono break-all transition-colors',
+                                    isMining[index] ? 'bg-cyan-950/20 border-cyan-500/50 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]' :
+                                    isValid(block) ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-400' : 'bg-rose-950/30 border-rose-800/50 text-rose-400'
+                                ]">
+                                    {{ block.hash || '計算中...' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 挖礦按鈕 -->
+                        <button 
+                            @click="mineBlock(index)"
+                            :disabled="isMining[index] || isValid(block)"
+                            :class="[
+                                'mt-6 w-full py-3 rounded-xl font-bold flex justify-center items-center gap-2 transition-all',
+                                isMining[index]
+                                    ? 'bg-slate-800 border border-cyan-500/50 text-cyan-400 cursor-not-allowed'
+                                    : isValid(block) 
+                                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 active:scale-[0.98]'
+                            ]"
+                        >
+                            <template v-if="isMining[index]">
+                                <span class="animate-pulse flex items-center gap-2">
+                                    <i class="fa-solid fa-gear fa-spin"></i> 運算中... (尋找 {{ difficultyPrefix }} 開頭)
+                                </span>
+                            </template>
+                            <template v-else>
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid" :class="isValid(block) ? 'fa-check' : 'fa-hammer'"></i> 
+                                    {{ isValid(block) ? '已符合難度驗證' : '開始挖礦 (Mine)' }}
+                                </span>
+                            </template>
+                        </button>
+                    </div>
+
+                    <!-- 垂直鏈結圖示 -->
+                    <div class="flex justify-center items-center py-2">
+                        <i class="fa-solid fa-link text-3xl text-slate-600 transform rotate-90"></i>
+                    </div>
+                </template>
+
+                <!-- 增加區塊按鈕 -->
+                <button 
+                    @click="addBlock" 
+                    class="mt-2 px-8 py-4 bg-slate-800/80 hover:bg-slate-700 text-cyan-400 font-bold rounded-2xl border border-slate-700 hover:border-cyan-400 transition-all flex items-center gap-3 shadow-lg hover:shadow-cyan-500/20 active:scale-95"
+                >
+                    <i class="fa-solid fa-plus text-xl"></i> 增加新區塊
+                </button>
+
+            </div>
+        </section>
+
+        <!-- 加密貨幣特色介紹 -->
+        <section id="crypto" class="bg-slate-800/30 border-t border-slate-800 py-16 flex-grow">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">常見加密貨幣特色</h2>
+                    <p class="text-slate-400">區塊鏈技術孕育了許多不同的加密貨幣，它們各自解決了不同的問題。</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Bitcoin -->
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:-translate-y-1 transition-transform shadow-xl">
+                        <div class="w-12 h-12 bg-orange-500/20 text-orange-400 rounded-full flex items-center justify-center mb-4 text-2xl">
+                            <i class="fa-brands fa-bitcoin"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-slate-100">Bitcoin (BTC)</h3>
+                        <p class="text-sm text-slate-400 mb-4">世界第一個加密貨幣，常被稱為「數位黃金」。</p>
+                        <ul class="text-sm text-slate-300 space-y-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-lock text-orange-400 w-4"></i> 價值儲存功能</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-orange-400 w-4"></i> 高度安全與去中心化</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-database text-orange-400 w-4"></i> 總量限制 2100 萬枚</li>
+                        </ul>
+                    </div>
+
+                    <!-- Ethereum -->
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:-translate-y-1 transition-transform shadow-xl">
+                        <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-brands fa-ethereum"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-slate-100">Ethereum (ETH)</h3>
+                        <p class="text-sm text-slate-400 mb-4">區塊鏈上的「世界電腦」，開創了智慧合約的時代。</p>
+                        <ul class="text-sm text-slate-300 space-y-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-file-contract text-blue-400 w-4"></i> 支援智慧合約</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-globe text-blue-400 w-4"></i> 豐富的 DeFi 與 NFT 生態</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-leaf text-blue-400 w-4"></i> 轉向 PoS 權益證明機制</li>
+                        </ul>
+                    </div>
+
+                    <!-- Solana -->
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:-translate-y-1 transition-transform shadow-xl">
+                        <div class="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-slate-100">Solana (SOL)</h3>
+                        <p class="text-sm text-slate-400 mb-4">主打極高速度與極低手續費的公鏈，適合高頻交易。</p>
+                        <ul class="text-sm text-slate-300 space-y-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-green-400 w-4"></i> 交易速度極快 (高 TPS)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-green-400 w-4"></i> 獨特的歷史證明 (PoH)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-coins text-green-400 w-4"></i> 手續費極低</li>
+                        </ul>
+                    </div>
+
+                    <!-- Stablecoins -->
+                    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:-translate-y-1 transition-transform shadow-xl">
+                        <div class="w-12 h-12 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mb-4 text-xl">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-slate-100">穩定幣 (USDT/USDC)</h3>
+                        <p class="text-sm text-slate-400 mb-4">價格與法定貨幣（通常是美元）掛鉤的加密貨幣。</p>
+                        <ul class="text-sm text-slate-300 space-y-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-scale-balanced text-teal-400 w-4"></i> 價格穩定不波動</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-store text-teal-400 w-4"></i> 避險與交易的結算單位</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-plane-departure text-teal-400 w-4"></i> 跨國轉帳便利</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 頁尾 -->
+        <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-slate-500 text-sm mt-auto">
+            <p>此網頁為區塊鏈教育示範用途。網頁內的雜湊計算均在您的瀏覽器前端即時運算完成。</p>
+        </footer>
+
+    </div>
+
+    <!-- 區塊鏈核心邏輯 (JavaScript) -->
+    <script>
+        // ==========================================
+        // 1. SHA-256 雜湊函式 (純 JavaScript 實作)
+        // ==========================================
+        function sha256(ascii) {
+            // 解決中文輸入導致的編碼問題：強制將 UTF-16 轉換為 UTF-8 格式的位元組字串
+            ascii = unescape(encodeURIComponent(ascii));
+
+            function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+            let mathPow = Math.pow;
+            let maxWord = mathPow(2, 32);
+            let lengthProperty = 'length';
+            let i, j;
+            let result = '';
+            let words = [];
+            let asciiBitLength = ascii[lengthProperty] * 8;
+            let hash = sha256.h = sha256.h || [];
+            let k = sha256.k = sha256.k || [];
+            let primeCounter = k[lengthProperty];
+            let isComposite = {};
+            for (let candidate = 2; primeCounter < 64; candidate++) {
+                if (!isComposite[candidate]) {
+                    for (i = 0; i < 313; i += candidate) { isComposite[i] = candidate; }
+                    hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                    k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                }
+            }
+            ascii += '\x80';
+            while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+            for (i = 0; i < ascii[lengthProperty]; i++) {
+                j = ascii.charCodeAt(i);
+                if (j >> 8) return; 
+                words[i >> 2] |= j << ((3 - i % 4) * 8);
+            }
+            words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+            words[words[lengthProperty]] = (asciiBitLength);
+            for (j = 0; j < words[lengthProperty];) {
+                let w = words.slice(j, j += 16);
+                let oldHash = hash;
+                hash = hash.slice(0, 8);
+                for (i = 0; i < 64; i++) {
+                    let w15 = w[i - 15], w2 = w[i - 2];
+                    let a = hash[0], e = hash[4];
+                    let temp1 = hash[7]
+                        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                        + ((e & hash[5]) ^ ((~e) & hash[6]))
+                        + k[i]
+                        + (w[i] = (i < 16) ? w[i] : (
+                            w[i - 16]
+                            + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                            + w[i - 7]
+                            + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                        )|0);
+                    let temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+                    hash = [(temp1 + temp2)|0].concat(hash);
+                    hash[4] = (hash[4] + temp1)|0;
+                }
+                for (i = 0; i < 8; i++) { hash[i] = (hash[i] + oldHash[i])|0; }
+            }
+            for (i = 0; i < 8; i++) {
+                for (j = 3; j + 1; j--) {
+                    let b = (hash[i] >> (j * 8)) & 255;
+                    result += ((b < 16) ? 0 : '') + b.toString(16);
+                }
+            }
+            return result;
+        }
+
+        // ==========================================
+        // 2. Vue 3 應用程式邏輯
+        // ==========================================
+        const { createApp, ref, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // 將難度改為響應式變數，讓使用者動態調整
+                const difficulty = ref(3); 
+                
+                // 動態產生對應數量的 0 (例如難度 3 會回傳 "000")
+                const difficultyPrefix = computed(() => '0'.repeat(difficulty.value));
+
+                // 初始區塊鏈狀態，新增 hashCount 用以記錄運算次數
+                const blocks = ref([
+                    { id: 1, nonce: 0, data: 'Genesis Block (創世區塊)', prevHash: '0000000000000000000000000000000000000000000000000000000000000000', hash: '', hashCount: 0 },
+                    { id: 2, nonce: 0, data: 'Alice 轉帳給 Bob 10 BTC', prevHash: '', hash: '', hashCount: 0 },
+                    { id: 3, nonce: 0, data: 'Bob 轉帳給 Charlie 5 BTC', prevHash: '', hash: '', hashCount: 0 }
+                ]);
+
+                const isMining = ref({});
+
+                // 計算單一區塊的雜湊值
+                const calculateHash = (id, nonce, data, prevHash) => {
+                    return sha256(id.toString() + nonce.toString() + data + prevHash);
+                };
+
+                // 判斷區塊是否有效
+                const isValid = (block) => {
+                    if (!block.hash) return false;
+                    // 改用動態難度前綴作驗證
+                    return block.hash.startsWith(difficultyPrefix.value) && 
+                           block.hash === calculateHash(block.id, block.nonce, block.data, block.prevHash);
+                };
+
+                // 重新計算從特定索引開始的所有後續區塊的雜湊
+                const updateChainFrom = (startIndex) => {
+                    for (let i = startIndex; i < blocks.value.length; i++) {
+                        if (i > 0) {
+                            blocks.value[i].prevHash = blocks.value[i - 1].hash;
+                        }
+                        // 只有在非挖礦狀態才重新計算，避免干擾動畫
+                        if (!isMining.value[i]) {
+                            blocks.value[i].hash = calculateHash(
+                                blocks.value[i].id, 
+                                blocks.value[i].nonce, 
+                                blocks.value[i].data, 
+                                blocks.value[i].prevHash
+                            );
+                            // 重設運算次數為 1，因為只是單純手動輸入的重新計算
+                            blocks.value[i].hashCount = 1;
+                        }
+                    }
+                };
+
+                // 當使用者輸入改變時觸發
+                const onInputChanged = (index) => {
+                    // 從被修改的區塊開始，往後更新所有的雜湊與前區塊連結
+                    updateChainFrom(index);
+                };
+
+                // 挖礦功能 (改版：使用非同步分批計算以更新 UI)
+                const mineBlock = (index) => {
+                    if (isMining.value[index]) return; // 避免重複點擊
+                    
+                    isMining.value[index] = true;
+                    let block = blocks.value[index];
+                    let nonce = 0; // 挖礦通常從 0 重新嘗試
+                    let attempts = 0; // 記錄本次挖礦的嘗試次數
+                    let targetPrefix = difficultyPrefix.value;
+                    
+                    // 每次 UI 渲染前計算幾次 Hash？
+                    // 數字越小，動畫越順暢但挖礦越慢；數字越大，挖得快但畫面較卡。
+                    const BATCH_SIZE = 500; 
+
+                    // 定義分批處理函式
+                    const computeBatch = () => {
+                        // 防呆：如果中途難度被改變，更新目標前綴
+                        targetPrefix = difficultyPrefix.value;
+
+                        // 進行一小批次的運算
+                        for (let i = 0; i < BATCH_SIZE; i++) {
+                            attempts++;
+                            let hash = calculateHash(block.id, nonce, block.data, block.prevHash);
+                            
+                            if (hash.startsWith(targetPrefix)) {
+                                // 🎉 找到了！符合難度條件
+                                block.nonce = nonce;
+                                block.hash = hash;
+                                block.hashCount = attempts;
+                                updateChainFrom(index + 1); // 更新後續區塊的連結
+                                isMining.value[index] = false;
+                                return; // 結束遞迴
+                            }
+                            nonce++;
+                        }
+
+                        // 這一批算完還沒找到，將目前的狀態更新給 Vue 以呈現動畫效果
+                        block.nonce = nonce;
+                        block.hashCount = attempts;
+                        block.hash = calculateHash(block.id, nonce, block.data, block.prevHash);
+
+                        // 利用 setTimeout 將控制權暫時交還給瀏覽器，讓畫面有機會重新渲染最新數值
+                        setTimeout(computeBatch, 0); 
+                    };
+
+                    // 啟動第一批運算
+                    computeBatch();
+                };
+
+                // 新增區塊功能
+                const addBlock = () => {
+                    const prevBlock = blocks.value[blocks.value.length - 1];
+                    const newIndex = blocks.value.length;
+                    
+                    const newBlock = {
+                        id: prevBlock.id + 1,
+                        nonce: 0,
+                        data: '',
+                        prevHash: prevBlock.hash,
+                        hash: '',
+                        hashCount: 0
+                    };
+                    
+                    // 將新區塊推入陣列
+                    blocks.value.push(newBlock);
+                    
+                    // 自動為新加入的區塊進行首次挖礦
+                    mineBlock(newIndex);
+                    
+                    // 平滑滾動到頁面最下方，方便查看新區塊
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                };
+
+                // 初始化：為所有初始區塊進行第一次挖礦 (載入時同步處理避免畫面凌亂)
+                onMounted(() => {
+                    let targetPrefix = difficultyPrefix.value;
+                    
+                    for (let i = 0; i < blocks.value.length; i++) {
+                        if (i > 0) blocks.value[i].prevHash = blocks.value[i - 1].hash;
+                        
+                        let nonce = 0;
+                        let attempts = 1;
+                        let hash = calculateHash(blocks.value[i].id, nonce, blocks.value[i].data, blocks.value[i].prevHash);
+                        
+                        while (!hash.startsWith(targetPrefix)) {
+                            nonce++;
+                            attempts++;
+                            hash = calculateHash(blocks.value[i].id, nonce, blocks.value[i].data, blocks.value[i].prevHash);
+                        }
+                        
+                        blocks.value[i].nonce = nonce;
+                        blocks.value[i].hashCount = attempts;
+                        blocks.value[i].hash = hash;
+                    }
+                });
+
+                return {
+                    blocks,
+                    isMining,
+                    difficulty,
+                    difficultyPrefix,
+                    isValid,
+                    onInputChanged,
+                    mineBlock,
+                    addBlock
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
